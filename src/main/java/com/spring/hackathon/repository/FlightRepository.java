@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.spring.hackathon.entity.Flight;
 
 @Repository
-public interface FlightRepository extends MongoRepository<Flight, Integer>{
-
-	List<Flight> findByIataFromAndIataTo(String iataFrom, String iataTo);
-	
+public interface FlightRepository extends MongoRepository<Flight, Integer> {
+    List<Flight> findByIataFromAndIataTo(String iataFrom, String iataTo, String day, String classType);
 }

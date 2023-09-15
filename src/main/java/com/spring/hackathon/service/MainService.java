@@ -3,7 +3,12 @@ package com.spring.hackathon.service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +23,10 @@ import com.spring.hackathon.dto.FlightSearchRequestDTO;
 import com.spring.hackathon.entity.Airline;
 import com.spring.hackathon.entity.Airport;
 import com.spring.hackathon.entity.Flight;
+import com.spring.hackathon.exceptions.ResourceNotFoundException;
 import com.spring.hackathon.repository.AirlineRepository;
 import com.spring.hackathon.repository.AirportRepository;
 import com.spring.hackathon.repository.FlightRepository;
-
 
 @Service
 public class MainService {
@@ -128,19 +133,4 @@ public class MainService {
 	public List<Airline> readAllAirline() {
 		return airlineRepository.findAll();
 	}
-	
-
-	public List<Flight> searchFlight(FlightSearchRequestDTO flightSearchRequestDTO) throws Exception {
-        String flyingFrom = flightSearchRequestDTO.getFlyingFrom();
-        String flyingTo = flightSearchRequestDTO.getFlyingTo();
-
-        // Use the custom query method from the repository to find flights by iataFrom and iataTo
-        List<Flight> flightList = flightRepository.findByIataFromAndIataTo(flyingFrom, flyingTo);
-
-        if (flightList.isEmpty()) {
-            throw new Exception("Flights not found for the specified route.");
-        } else {
-        	return flightList;        }
-	}
-
 }

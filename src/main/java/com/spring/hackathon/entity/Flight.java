@@ -35,13 +35,13 @@ public class Flight {
 	private Integer active;
 
 	@JsonProperty("class_business")
-	private boolean classBusiness;
+	private Boolean classBusiness;
 
 	@JsonProperty("class_economy")
-	private boolean classEconomy;
+	private Boolean classEconomy;
 
 	@JsonProperty("class_first")
-	private boolean classFirst;
+	private Boolean classFirst;
 
 	private String day1;
 
