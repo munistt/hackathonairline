@@ -31,10 +31,10 @@ public class FlightSearchService {
 		String flyingclassType = flightSearchRequestDTO.getClassType();
 
 		String day = mapDateToDay(departureDate);
+		
 
-		boolean mapFlyingClassType = mapFlyingClassType(flyingclassType);
-
-		if (day.equals("yes") && mapFlyingClassType) {
+//		boolean mapFlyingClassType = mapFlyingClassType(flyingclassType);
+//
 			List<Flight> flightList = flightRepository.findByIataFromAndIataTo(iataFrom, iataTo, departureDate,
 					flyingclassType);
 			if (flightList.isEmpty()) {
@@ -42,33 +42,30 @@ public class FlightSearchService {
 			} else {
 				return flightList;
 			}
-		} else {
-			throw new TodayNoFlightRunningOnThisRoute("Today, No flight running on this route.");
 
-		}
 
 	}
 
-	private boolean mapFlyingClassType(String flyingclassType) {
-
-		boolean classInstanceField;
-
-		switch (flyingclassType) {
-		case "business":
-			classInstanceField = true;
-			break;
-		case "economy":
-			classInstanceField = true;
-			break;
-		case "first":
-			classInstanceField = true;
-			break;
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + flyingclassType);
-		}
-
-		return classInstanceField;
-	}
+//	private boolean mapFlyingClassType(String flyingclassType) {
+//
+//		boolean classInstanceField;
+//
+//		switch (flyingclassType) {
+//		case "business":
+//			classInstanceField = true;
+//			break;
+//		case "economy":
+//			classInstanceField = true;
+//			break;
+//		case "first":
+//			classInstanceField = true;
+//			break;
+//		default:
+//			throw new IllegalArgumentException("Unexpected value: " + flyingclassType);
+//		}
+//
+//		return classInstanceField;
+//	}
 
 	private String mapDateToDay(String departureDate) {
 

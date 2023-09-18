@@ -10,13 +10,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
-@Document(collection = "flights-routes") // MongoDB collection name
+@Document(collection = "flight-routes") // MongoDB collection name
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Flight {
 
 	@Id
 	private Integer id;
+	
+	
+	private Integer routeId;
 
 	@JsonProperty("iata_from")
 	private String iataFrom;
@@ -68,5 +71,20 @@ public class Flight {
 
 	@JsonProperty("min_duration")
 	private int minDuration;
+
+	public boolean isClassFirst() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isClassEconomy() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isClassBusiness() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

@@ -3,13 +3,9 @@ package com.spring.hackathon.service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -19,11 +15,9 @@ import org.springframework.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.hackathon.dto.FlightSearchRequestDTO;
 import com.spring.hackathon.entity.Airline;
 import com.spring.hackathon.entity.Airport;
 import com.spring.hackathon.entity.Flight;
-import com.spring.hackathon.exceptions.ResourceNotFoundException;
 import com.spring.hackathon.repository.AirlineRepository;
 import com.spring.hackathon.repository.AirportRepository;
 import com.spring.hackathon.repository.FlightRepository;
@@ -86,26 +80,67 @@ public class MainService {
 	}
 
 	// reading flight routes JSON
+//	public void importFlightsFromJsonFile() {
+//		try {
+//			// Load the JSON file from the classpath (assuming it's in the resources folder)
+//			File jsonFile = ResourceUtils.getFile("classpath:airline-data/flights_routes.json");
+//
+//			// Initialize ObjectMapper to deserialize JSON
+//			ObjectMapper objectMapper = new ObjectMapper();
+//
+//			// Read JSON data into a list of Flight objects
+//			List<Flight> flights = objectMapper.readValue(jsonFile, new TypeReference<List<Flight>>() {
+//			});
+//
+//			// Save the list of Flight objects to MongoDB
+//			flightRepository.saveAll(flights);
+//
+//			System.out.println("Imported " + flights.size() + " flights from JSON file to MongoDB.");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	public void importFlightsFromJsonFile() {
-		try {
-			// Load the JSON file from the classpath (assuming it's in the resources folder)
-			File jsonFile = ResourceUtils.getFile("classpath:airline-data/flights_routes.json");
+	    try {
+	        // Load the JSON file from the classpath (assuming it's in the resources folder)
+	        File jsonFile = ResourceUtils.getFile("classpath:airline-data/flights_routes.json");
 
-			// Initialize ObjectMapper to deserialize JSON
-			ObjectMapper objectMapper = new ObjectMapper();
+	        // Initialize ObjectMapper to deserialize JSON
+	        ObjectMapper objectMapper = new ObjectMapper();
 
-			// Read JSON data into a list of Flight objects
-			List<Flight> flights = objectMapper.readValue(jsonFile, new TypeReference<List<Flight>>() {
-			});
+	        // Read JSON data into a list of Flight objects
+	        List<Flight> flights = objectMapper.readValue(jsonFile, new TypeReference<List<Flight>>() {});
 
-			// Save the list of Flight objects to MongoDB
-			flightRepository.saveAll(flights);
+	        // Assign routeId to each flight based on your logic
+	        for (Flight flight : flights) {
+	            // Your route identification logic here
+	            String iataFrom = flight.getIataFrom();
+	            String iataTo = flight.getIataTo();
+	            
+	         // Example: Concatenate departure and destination airports as a route key
+	            String routeKey = iataFrom + "-" + iataTo;
 
-			System.out.println("Imported " + flights.size() + " flights from JSON file to MongoDB.");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	            // Calculate the hash code and use its absolute value
+	            int routeId = Math.abs(routeKey.hashCode());
+	            
+	            flight.setRouteId(routeId);
+
+	            // Example: Concatenate departure and destination airports as a route key
+//	            String routeKey = iataFrom + "-" + iataTo;
+//
+//	            String routeId = UUID.randomUUID().toString();
+//	    		flight.setRouteId(routeId.substring(0, 6));
+	        }
+
+	        // Save the list of Flight objects to MongoDB
+	        flightRepository.saveAll(flights);
+
+	        System.out.println("Imported " + flights.size() + " flights from JSON file to MongoDB.");
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
+
 
 	// reading all airports
 	public List<Airport> readAllAirports() {

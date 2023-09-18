@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spring.hackathon.dto.FlightSearchDTO;
 import com.spring.hackathon.dto.FlightSearchRequestDTO;
+//import com.spring.hackathon.dto.MultipleSearchRequestDTO;
 import com.spring.hackathon.entity.Airline;
 import com.spring.hackathon.entity.Airport;
 import com.spring.hackathon.entity.Flight;
@@ -22,6 +24,9 @@ import com.spring.hackathon.exceptions.ResourceNotFoundException;
 import com.spring.hackathon.exceptions.TodayNoFlightRunningOnThisRoute;
 import com.spring.hackathon.service.FlightSearchService;
 import com.spring.hackathon.service.MainService;
+import com.spring.hackathon.service.MultiCitySearch;
+import com.spring.hackathon.service.RouteSearchByIdService;
+import com.spring.hackathon.service.RouteSearchService;
 
 @RestController
 @RequestMapping("/api/v1/flights")
@@ -32,7 +37,17 @@ public class MainController {
 
 	@Autowired
 	private FlightSearchService flightSearchService;
-
+		
+	@Autowired
+	private MultiCitySearch multiCitySearch;
+	
+	@Autowired
+	private RouteSearchService rs;
+	
+	@Autowired
+	private RouteSearchByIdService rIdService;
+	
+	
 	@PostMapping("/readAirline")
 	public void readAndSaveAirline(@RequestParam String filePath) throws IOException {
 		mainService.readJsonFileAndSaveToMongo(filePath);
@@ -74,17 +89,54 @@ public class MainController {
 		return new ResponseEntity<>(airline, HttpStatus.OK);
 	}
 
+	// fetching all airline data
+	@GetMapping("/fetchAll")
 	public ResponseEntity<List<Airline>> fetchAllAirline() {
 		List<Airline> readAllAirline = mainService.readAllAirline();
 		return new ResponseEntity<>(readAllAirline, HttpStatus.OK);
 	}
 
-	@PostMapping("/search")
+	// searching airlines between the two routes by single query
+	@PostMapping("/searchQuery")
 	public ResponseEntity<List<Flight>> searchFlights(@RequestBody FlightSearchRequestDTO request)
 			throws ResourceNotFoundException, TodayNoFlightRunningOnThisRoute {
 		List<Flight> filteredFlights = flightSearchService.findFlights(request);
 
 		return ResponseEntity.ok(filteredFlights);
 	}
+	
+	
+	@PostMapping("/searchFlights")
+	public ResponseEntity<List<List<Flight>>> findMultiFlights(@RequestBody List<FlightSearchRequestDTO> routes) throws ResourceNotFoundException {
+		
+		List<List<Flight>> flightsByList = multiCitySearch.findFlightsByList(routes);
+		System.out.println(flightsByList);
+		
+		return new ResponseEntity<>(flightsByList, HttpStatus.OK);
+	}
+	
+	@PostMapping("/searchRoutes")
+    public ResponseEntity<List<List<Flight>>> searchMultiFlights(@RequestBody FlightSearchDTO requestDTO) {
+        try {
+            List<List<Flight>> allFlights = rs.findFlights(requestDTO.getRoutes());
+            return new ResponseEntity<>(allFlights, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            // Handle exceptions and return an appropriate HTTP response
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+	
+	@PostMapping("/searchFlightsByRouteIds")
+    public ResponseEntity<List<List<Flight>>> searchFlightsByRouteIds(@RequestBody List<Integer> routeIds) throws TodayNoFlightRunningOnThisRoute {
+        try {
+            List<List<Flight>> allFlights = rIdService.findFlights(routeIds);
+            return new ResponseEntity<>(allFlights, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+	
+	
+	
 
 }
