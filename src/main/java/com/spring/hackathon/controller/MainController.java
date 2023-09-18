@@ -22,6 +22,7 @@ import com.spring.hackathon.entity.Airport;
 import com.spring.hackathon.entity.Flight;
 import com.spring.hackathon.exceptions.ResourceNotFoundException;
 import com.spring.hackathon.exceptions.TodayNoFlightRunningOnThisRoute;
+import com.spring.hackathon.repository.SearchRepository;
 import com.spring.hackathon.service.FlightSearchService;
 import com.spring.hackathon.service.MainService;
 import com.spring.hackathon.service.MultiCitySearch;
@@ -46,6 +47,9 @@ public class MainController {
 	
 	@Autowired
 	private RouteSearchByIdService rIdService;
+
+	@Autowired
+	private SearchRepository searchRepository;
 	
 	
 	@PostMapping("/readAirline")
@@ -135,6 +139,13 @@ public class MainController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+	///sugessions for airport
+	@GetMapping("/sugesstions/{text}")
+	public List<Airport> sugesstions(@PathVariable String text) {
+		return searchRepository.findByText(text);
+	}
 	
 	
 	
