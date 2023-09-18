@@ -115,7 +115,7 @@ public class MainController {
 		return new ResponseEntity<>(flightsByList, HttpStatus.OK);
 	}
 	
-	@PostMapping("/searchRoutes")
+	@PostMapping("/searchRoutesList")
     public ResponseEntity<List<List<Flight>>> searchMultiFlights(@RequestBody FlightSearchDTO requestDTO) {
         try {
             List<List<Flight>> allFlights = rs.findFlights(requestDTO.getRoutes());

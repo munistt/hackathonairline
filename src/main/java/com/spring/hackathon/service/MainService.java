@@ -79,68 +79,42 @@ public class MainService {
 
 	}
 
-	// reading flight routes JSON
-//	public void importFlightsFromJsonFile() {
-//		try {
-//			// Load the JSON file from the classpath (assuming it's in the resources folder)
-//			File jsonFile = ResourceUtils.getFile("classpath:airline-data/flights_routes.json");
-//
-//			// Initialize ObjectMapper to deserialize JSON
-//			ObjectMapper objectMapper = new ObjectMapper();
-//
-//			// Read JSON data into a list of Flight objects
-//			List<Flight> flights = objectMapper.readValue(jsonFile, new TypeReference<List<Flight>>() {
-//			});
-//
-//			// Save the list of Flight objects to MongoDB
-//			flightRepository.saveAll(flights);
-//
-//			System.out.println("Imported " + flights.size() + " flights from JSON file to MongoDB.");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	// reading flight routes json file
 	public void importFlightsFromJsonFile() {
-	    try {
-	        // Load the JSON file from the classpath (assuming it's in the resources folder)
-	        File jsonFile = ResourceUtils.getFile("classpath:airline-data/flights_routes.json");
+		try {
+			// Loading the JSON file
+			File jsonFile = ResourceUtils.getFile("classpath:airline-data/flights_routes.json");
 
-	        // Initialize ObjectMapper to deserialize JSON
-	        ObjectMapper objectMapper = new ObjectMapper();
+			// Initializing ObjectMapper to de-serialize JSON
+			ObjectMapper objectMapper = new ObjectMapper();
 
-	        // Read JSON data into a list of Flight objects
-	        List<Flight> flights = objectMapper.readValue(jsonFile, new TypeReference<List<Flight>>() {});
+			// Read JSON data into a list of Flight objects
+			List<Flight> flights = objectMapper.readValue(jsonFile, new TypeReference<List<Flight>>() {
+			});
 
-	        // Assign routeId to each flight based on your logic
-	        for (Flight flight : flights) {
-	            // Your route identification logic here
-	            String iataFrom = flight.getIataFrom();
-	            String iataTo = flight.getIataTo();
-	            
-	         // Example: Concatenate departure and destination airports as a route key
-	            String routeKey = iataFrom + "-" + iataTo;
+			// Assign routeId to each flight based on your logic
+			for (Flight flight : flights) {
+				// Your route identification logic here
+				String iataFrom = flight.getIataFrom();
+				String iataTo = flight.getIataTo();
 
-	            // Calculate the hash code and use its absolute value
-	            int routeId = Math.abs(routeKey.hashCode());
-	            
-	            flight.setRouteId(routeId);
+				// Example: Concatenate departure and destination airports as a route key
+				String routeKey = iataFrom + "-" + iataTo;
 
-	            // Example: Concatenate departure and destination airports as a route key
-//	            String routeKey = iataFrom + "-" + iataTo;
-//
-//	            String routeId = UUID.randomUUID().toString();
-//	    		flight.setRouteId(routeId.substring(0, 6));
-	        }
+				// Calculate the hash code and use its absolute value
+				int routeId = Math.abs(routeKey.hashCode());
 
-	        // Save the list of Flight objects to MongoDB
-	        flightRepository.saveAll(flights);
+				flight.setRouteId(routeId);
+			}
 
-	        System.out.println("Imported " + flights.size() + " flights from JSON file to MongoDB.");
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+			// Save the list of Flight objects to MongoDB
+			flightRepository.saveAll(flights);
+
+			System.out.println("Imported " + flights.size() + " flights from JSON file to MongoDB.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
 
 	// reading all airports
 	public List<Airport> readAllAirports() {

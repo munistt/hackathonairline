@@ -66,6 +66,7 @@ public class FlightSearchService {
 //
 //		return classInstanceField;
 //	}
+	
 
 	private String mapDateToDay(String departureDate) {
 
